@@ -6,6 +6,10 @@ import scala.collection.mutable
 /**
  * The event emitter class
  * @tparam T Output type for the callback data
+ *
+ * - Channel.ALL: event will be emitted to all registered channels.
+ * - Channel.SOME with a single channel: event will be emitted to that channel and to listeners registered for ALL channels.
+ * - Channel.SOME with multiple channels: event will be emitted to all provided channels.
  */
 class Emitter[T] {
   private val callbacks: mutable.Map[String, mutable.ListBuffer[(String, Callback[T])]] = mutable.Map.empty
@@ -17,6 +21,7 @@ class Emitter[T] {
    * @param channel The channel(s)
    * @param data    The data to emit
    */
+  // prevent IDE from highlighting
   //noinspection DuplicatedCode
   def emit(channel: Channel, data: T): Unit = {
     var channelsToEmit: Iterable[String] = Iterable.empty
@@ -29,12 +34,15 @@ class Emitter[T] {
         // Special character for
         targetChannel = this.ALL_CHANNELS_ID
         channelsToEmit = this.callbacks.keys.toSeq
+      // For N specified channels
       case some: Channel.SOME =>
         some.channels match {
           case Seq(_) =>
+            // For a single channel, set it as target and emit to it and ALL_CHANNELS
             targetChannel = some.channels.head
             channelsToEmit = Seq(ALL_CHANNELS_ID, targetChannel)
           case _ +: _ =>
+            // For multiple channels, use ALL_CHANNELS_ID as target and emit to all specified channels
             targetChannel = ALL_CHANNELS_ID
             channelsToEmit = some.channels
         }
@@ -48,7 +56,7 @@ class Emitter[T] {
   }
 
   /**
-   * Listens to an event channel
+   * Registers a listener to an event channel
    * @param channel  The channel(s)
    * @param callback The callback to relay the data
    * @return
