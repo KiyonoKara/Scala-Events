@@ -18,11 +18,9 @@ class Emitter[T] {
 
   /**
    * Emits an event based on the provided channel(s)
-   * @param channel The channel(s)
+   * @param channel The channel(s) as enum
    * @param data    The data to emit
    */
-  // prevent IDE from highlighting
-  //noinspection DuplicatedCode
   def emit(channel: Channel, data: T): Unit = {
     var channelsToEmit: Iterable[String] = Iterable.empty
     var targetChannel: String = new String()
@@ -56,8 +54,17 @@ class Emitter[T] {
   }
 
   /**
+   * Emits an event based on the provided channel, only accepts String
+   * @param channel The channel
+   * @param data    The data to emit
+   */
+  def emit(channel: String, data: T): Unit = {
+    this.emit(Channel.SOME(channel), data)
+  }
+
+  /**
    * Registers a listener to an event channel
-   * @param channel  The channel(s)
+   * @param channel  The channel(s) as enum
    * @param callback The callback to relay the data
    * @return
    */
@@ -85,6 +92,16 @@ class Emitter[T] {
     callbackPairBuffer += Tuple2(uuid, callback)
     // Return event data
     Event(channel, uuid)
+  }
+
+  /**
+   * Registers a listener to an event channel, only accepts String
+   * @param channel Channel string
+   * @param callback The callback to relay the data
+   * @return
+   */
+  def on(channel: String, callback: Callback[T]): Event = {
+    this.on(Channel.SOME(channel), callback)
   }
 
   /**
