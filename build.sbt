@@ -6,6 +6,7 @@ version := "0.0.1"
 scalaVersion := "3.3.1"
 crossScalaVersions := Seq("3.2.2", scalaVersion.value)
 versionScheme := Some("semver-spec")
+sbtVersion := "1.9.8"
 
 organization += "org.kiyo"
 startYear := Some(2023)
