@@ -80,14 +80,14 @@ object Test extends App {
 
   mapEmitter.emit(Channel.SOME("c6"), Map("c6" -> "won't print"))
   Thread.sleep(1000)
-  
+
   println("\nTest with Any data")
   val emitter = Emitter[Any]
-  
+
   val e1 = emitter.on("c1", (_, data) => {
-    println("c1: " + data)    
+    println("c1: " + data)
   })
-  
+
   emitter.emit("c1", Seq(1, 2, 3))
 
   /*
